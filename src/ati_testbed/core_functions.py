@@ -49,7 +49,9 @@ class Controller:
         
         for i in range(1, 5, 1):
             self.dll.GA_LmtsOn(i, -1)
+            self.dll.GA_EncOn(i)
             self.dll.GA_AxisOn(i)
+            self.dll.GA_PrfTrap(i)
             self.dll.GA_SetAxisBand(i, c_int(20), 10)
             
         self.dll.GA_LmtSns(255)
@@ -84,6 +86,8 @@ class Controller:
             if m == 4:
                 time.sleep(1)
                 self.dll.GA_ZeroPos(1, 4)
+                for j in range(1, 5):
+                    self.dll.GA_PrfTrap(j)
                 print('回零结束')
                 break
             time.sleep(0.05)
@@ -101,9 +105,6 @@ class Controller:
         m = [x * 2000, x * 2000, z * 2000, y * 2000] # 毫米到脉冲映射
         vel_spike = 2 * vel #  1 毫米/秒 = 2 脉冲/毫秒
         for i in range(1, 5, 1):
-            self.dll.GA_EncOn(i)
-            self.dll.GA_AxisOn(i)
-            self.dll.GA_PrfTrap(i)
             self.dll.GA_SetTrapPrmSingle(i, c_double(1.0), c_double(1.0), c_double(0.0), 0)
             self.dll.GA_SetPos(i, c_int64(int(m[i-1])))
             self.dll.GA_SetVel(i, c_double(vel_spike))
